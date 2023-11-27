@@ -3,7 +3,6 @@ package ru.clevertec.course.session.starter.bpp;
 import lombok.RequiredArgsConstructor;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.springframework.aop.MethodBeforeAdvice;
 import org.springframework.beans.factory.BeanFactory;
 import ru.clevertec.course.session.starter.annotation.LoginParameter;
 import ru.clevertec.course.session.starter.annotation.SessionManagement;
@@ -11,18 +10,22 @@ import ru.clevertec.course.session.starter.exception.LoginForbiddenException;
 import ru.clevertec.course.session.starter.exception.SessionProxyException;
 import ru.clevertec.course.session.starter.model.LoginProvider;
 import ru.clevertec.course.session.starter.model.UserSession;
+import ru.clevertec.course.session.starter.property.SessionBlackListProperties;
+import ru.clevertec.course.session.starter.service.BlackListProvider;
 import ru.clevertec.course.session.starter.service.SessionService;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 public class SessionProxyMethodInterceptor implements MethodInterceptor {
 
     private final BeanFactory beanFactory;
     private final SessionService sessionService;
+    private final SessionBlackListProperties blackListProperties;
 
 
     @Override
@@ -43,7 +46,7 @@ public class SessionProxyMethodInterceptor implements MethodInterceptor {
             Optional.of(login)
                     .flatMap(sessionService::getSession)
                     .or(() -> Optional.ofNullable(sessionService.create(login)))
-                    .map(s -> this.setSessionParameters(s, arguments));
+                    .ifPresent(s -> this.setSessionParameters(s, parameters, arguments));
 
         }
 
@@ -52,15 +55,17 @@ public class SessionProxyMethodInterceptor implements MethodInterceptor {
 
     private Set<String> extractBlackList(SessionManagement annotation) {
         Set<String> blackList = new HashSet<>(List.of(annotation.blackList()));
+        blackList.addAll(Stream.concat(annotation.includeDefaultProviders() ?
+                                blackListProperties.getBlackListProviders().stream() : Stream.empty(),
+                        Stream.of(annotation.blackListProviders()))
+                .map(beanFactory::getBean)
+                .flatMap(pr -> pr.getBlackList().stream())
+                .collect(Collectors.toSet())
+        );
 
-        if (annotation.includeProviders()) {
-            blackList.addAll(Arrays.stream(annotation.blackListProviders())
-                    .map(beanFactory::getBean)
-                    .flatMap(pr -> pr.getBlackList().stream())
-                    .collect(Collectors.toSet()));
-        }
         return blackList;
     }
+
 
     private Optional<String> getLogin(Parameter[] parameters, Object[] arguments) {
         for (int i = 0; i < arguments.length; i++) {
@@ -76,10 +81,10 @@ public class SessionProxyMethodInterceptor implements MethodInterceptor {
         return Optional.empty();
     }
 
-    private UserSession setSessionParameters(UserSession session, Object[] arguments) {
+    private UserSession setSessionParameters(UserSession session, Parameter[] parameters, Object[] arguments) {
         boolean check = false;
         for (int i = 0; i < arguments.length; i++) {
-            if (arguments[i] instanceof UserSession) {
+            if (UserSession.class.isAssignableFrom(parameters[i].getType())) {
                 arguments[i] = session;
                 check = true;
             }
