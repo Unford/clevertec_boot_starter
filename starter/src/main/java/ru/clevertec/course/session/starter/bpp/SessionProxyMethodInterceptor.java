@@ -9,9 +9,8 @@ import ru.clevertec.course.session.starter.annotation.SessionManagement;
 import ru.clevertec.course.session.starter.exception.LoginForbiddenException;
 import ru.clevertec.course.session.starter.exception.SessionProxyException;
 import ru.clevertec.course.session.starter.model.LoginProvider;
-import ru.clevertec.course.session.starter.model.UserSession;
+import ru.clevertec.course.session.starter.model.SessionDetails;
 import ru.clevertec.course.session.starter.property.SessionBlackListProperties;
-import ru.clevertec.course.session.starter.service.BlackListProvider;
 import ru.clevertec.course.session.starter.service.SessionService;
 
 import java.lang.reflect.Method;
@@ -81,10 +80,10 @@ public class SessionProxyMethodInterceptor implements MethodInterceptor {
         return Optional.empty();
     }
 
-    private UserSession setSessionParameters(UserSession session, Parameter[] parameters, Object[] arguments) {
+    private SessionDetails setSessionParameters(SessionDetails session, Parameter[] parameters, Object[] arguments) {
         boolean check = false;
         for (int i = 0; i < arguments.length; i++) {
-            if (UserSession.class.isAssignableFrom(parameters[i].getType())) {
+            if (SessionDetails.class.isAssignableFrom(parameters[i].getType())) {
                 arguments[i] = session;
                 check = true;
             }

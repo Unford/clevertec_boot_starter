@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class DefaultUserSession implements UserSession {
+public class DefaultSessionDetails implements SessionDetails {
     private Long id;
     private String login;
-    private LocalDateTime createdDateTime;
+    private LocalDateTime createDateTime;
 }

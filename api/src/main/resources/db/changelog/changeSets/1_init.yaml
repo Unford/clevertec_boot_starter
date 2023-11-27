@@ -1,0 +1,33 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1701103873534-1
+      author: vladimir_feshenko
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_user_sessions
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: login
+                  type: VARCHAR(255)
+              - column:
+                  name: create_date_time
+                  type: DATETIME
+            tableName: user_sessions
+  - changeSet:
+      id: 1701103873534-2
+      author: vladimir_feshenko
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: login
+            constraintName: uc_user_sessions_login
+            tableName: user_sessions
+

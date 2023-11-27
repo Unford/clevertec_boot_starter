@@ -1,0 +1,33 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1701103873534-3
+      author: vladimir_feshenko
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - insert:
+            tableName: user_sessions
+            columns:
+              - column:
+                  name: login
+                  value: user
+              - column:
+                  name: create_date_time
+                  value: now()
+        - insert:
+            tableName: user_sessions
+            columns:
+              - column:
+                  name: login
+                  value: delete_me_pls
+              - column:
+                  name: create_date_time
+                  value: '2022-11-27 13:45:00'
+        - insert:
+            tableName: user_sessions
+            columns:
+              - column:
+                  name: login
+                  value: immortal
+              - column:
+                  name: create_date_time
+                  value: '2034-11-27 15:00:00'
