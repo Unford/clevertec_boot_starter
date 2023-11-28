@@ -22,7 +22,6 @@ repositories {
 
 dependencies {
     api project(":session-api")
-    api project(":session")
 
     implementation 'org.springframework.boot:spring-boot-starter'
 

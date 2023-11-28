@@ -40,7 +40,7 @@ public class SessionProxyMethodInterceptor implements MethodInterceptor {
                     .orElseThrow(() -> new SessionProxyException("Login parameter not found, provide LoginProvider or" +
                             " String annotated @LoginParameter"));
             if (blackList.contains(login)) {
-                throw new LoginForbiddenException("login access denied, you are on the black list");
+                throw new LoginForbiddenException("Access denied for '%s', you are on the black list".formatted(login));
             }
             Optional.of(login)
                     .flatMap(sessionService::getSession)

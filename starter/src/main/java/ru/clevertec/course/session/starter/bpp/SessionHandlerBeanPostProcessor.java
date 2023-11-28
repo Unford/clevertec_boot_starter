@@ -1,6 +1,5 @@
 package ru.clevertec.course.session.starter.bpp;
 
-import org.aopalliance.intercept.MethodInterceptor;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.support.AopUtils;
@@ -8,12 +7,14 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import ru.clevertec.course.session.api.service.SessionService;
 import ru.clevertec.course.session.starter.annotation.SessionManagement;
 import ru.clevertec.course.session.starter.property.SessionBlackListProperties;
-import ru.clevertec.course.session.api.service.SessionService;
 
-import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 
 public class SessionHandlerBeanPostProcessor implements BeanPostProcessor, BeanFactoryAware {
