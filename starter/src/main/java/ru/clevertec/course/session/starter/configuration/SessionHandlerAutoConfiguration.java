@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfig
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Role;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import ru.clevertec.course.session.api.service.SessionService;
 import ru.clevertec.course.session.starter.bpp.SessionHandlerBeanPostProcessor;
 import ru.clevertec.course.session.starter.cleaner.SessionCleaner;
@@ -24,6 +25,7 @@ import ru.clevertec.course.session.starter.service.PropertyBlackListProvider;
 @AutoConfigureAfter(JpaRepositoriesAutoConfiguration.class)
 @ConditionalOnProperty(value = "clevertec.session.enable", havingValue = "true")
 @Slf4j
+@EnableScheduling
 public class SessionHandlerAutoConfiguration {
     @Bean
     public SessionHandlerBeanPostProcessor sessionHandlerBeanPostProcessor() {

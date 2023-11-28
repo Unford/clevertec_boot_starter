@@ -27,7 +27,7 @@ public class UserController {
     private final UserService userService;
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    @SessionManagement(blackList = "s", blackListProviders = GatewayBlackListProvider.class, includeDefaultProviders = false)
+    @SessionManagement(blackList = "user1", blackListProviders = GatewayBlackListProvider.class, includeDefaultProviders = false)
     public UserDto createUser(@RequestBody @Validated({CreateValidation.class, Default.class})
                               UserDto userDto, SessionDetails sessionDetails) {
         log.info("{}",sessionDetails);

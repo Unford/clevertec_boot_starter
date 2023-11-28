@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UserSessionRepository extends JpaRepository<UserSession, String> {
-    Optional<SessionDetails> findByLogin(String login);
+    Optional<UserSession> findByLogin(String login);
 
 
     @Modifying

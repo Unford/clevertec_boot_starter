@@ -17,12 +17,11 @@ import java.util.UUID;
 @Accessors(chain = true)
 @Entity
 @Table(name = "user_sessions")
-public class UserSession implements SessionDetails {
+public class UserSession {
 
     @Id
     @UuidGenerator
     private String id;
-    @Column(unique = true)
     private String login;
     private LocalDateTime createDateTime;
 
