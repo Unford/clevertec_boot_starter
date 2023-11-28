@@ -19,19 +19,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(unique = true, nullable = false)
-    private String nickname;
+    private String login;
     private String name;
     @Column(unique = true, nullable = false)
     private String email;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_channel_subscription",
-            inverseJoinColumns = @JoinColumn(name = "channel_id"),
-            joinColumns = @JoinColumn(name = "user_id")
-    )
-    @ToString.Exclude
-    private Set<Channel> subscribedChannels;
 
 
     @Override
@@ -40,7 +32,7 @@ public class User {
         if (!(o instanceof User user)) return false;
 
         if (!Objects.equals(id, user.id)) return false;
-        if (!Objects.equals(nickname, user.nickname)) return false;
+        if (!Objects.equals(login, user.login)) return false;
         if (!Objects.equals(name, user.name)) return false;
         return Objects.equals(email, user.email);
     }
@@ -48,7 +40,7 @@ public class User {
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (nickname != null ? nickname.hashCode() : 0);
+        result = 31 * result + (login != null ? login.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
         return result;

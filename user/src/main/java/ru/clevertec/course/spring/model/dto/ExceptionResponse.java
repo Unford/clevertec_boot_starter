@@ -1,4 +1,4 @@
-package ru.clevertec.course.spring.model.dto.response;
+package ru.clevertec.course.spring.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

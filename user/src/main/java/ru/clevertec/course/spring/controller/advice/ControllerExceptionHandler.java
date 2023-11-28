@@ -16,9 +16,10 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import ru.clevertec.course.session.starter.exception.LoginForbiddenException;
 import ru.clevertec.course.spring.exception.CustomErrorCode;
 import ru.clevertec.course.spring.exception.ServiceException;
-import ru.clevertec.course.spring.model.dto.response.ExceptionResponse;
+import ru.clevertec.course.spring.model.dto.ExceptionResponse;
 
 import java.util.Collection;
 import java.util.Set;
@@ -72,13 +73,12 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
 
-
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ExceptionResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
         CustomErrorCode errorCode = CustomErrorCode.TYPE_MISMATCH;
 
-       String message =  ex.getParameter().getParameterName() +
-               ex.getParameter().getParameter().getType().getName();
+        String message = ex.getParameter().getParameterName() +
+                ex.getParameter().getParameter().getType().getName();
         ExceptionResponse errorInfo = new ExceptionResponse(errorCode.getCode(), message);
         return new ResponseEntity<>(errorInfo, errorCode.getHttpStatus());
     }
@@ -104,6 +104,13 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ServiceException.class)
     public ResponseEntity<ExceptionResponse> handleServiceException(ServiceException ex) {
         CustomErrorCode errorCode = ex.getErrorCode();
+        ExceptionResponse errorInfo = new ExceptionResponse(errorCode.getCode(), ex.getMessage());
+        return new ResponseEntity<>(errorInfo, errorCode.getHttpStatus());
+    }
+
+    @ExceptionHandler(LoginForbiddenException.class)
+    public ResponseEntity<ExceptionResponse> handleServiceException(LoginForbiddenException ex) {
+        CustomErrorCode errorCode = CustomErrorCode.FORBIDDEN;
         ExceptionResponse errorInfo = new ExceptionResponse(errorCode.getCode(), ex.getMessage());
         return new ResponseEntity<>(errorInfo, errorCode.getHttpStatus());
     }

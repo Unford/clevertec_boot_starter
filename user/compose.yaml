@@ -1,4 +1,5 @@
 services:
+
   postgres:
     image: 'postgres:14.9'
     environment:
@@ -8,18 +9,11 @@ services:
     ports:
       - '5432:5432'
 
-  minio:
-    image: minio/minio:latest
-    container_name: minio2
-    environment:
-      - MINIO_ROOT_USER=minioadmin
-      - MINIO_ROOT_PASSWORD=minioadmin
-    command: server ~/minio --console-address :9090
+  wiremock:
+    image: "wiremock/wiremock:latest"
+    container_name: my_wiremock
     ports:
-      - '9090:9090'
-      - '9000:9000'
+      - 4444:8080
     volumes:
-      - minio-data:/minio
-volumes:
-  minio-data:
-    driver: local
+      - ./wiremock/__files:/home/wiremock/__files
+      - ./wiremock/mappings:/home/wiremock/mappings

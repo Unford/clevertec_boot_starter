@@ -6,7 +6,9 @@ plugins {
 
 group = 'ru.clevertec.course'
 version = '0.0.1'
-
+ext {
+    set('springCloudVersion', "2022.0.4")
+}
 java {
     sourceCompatibility = '17'
 }
@@ -26,6 +28,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
     developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
 
@@ -36,12 +39,14 @@ dependencies {
 
     implementation 'org.liquibase:liquibase-core'
     implementation 'net.lbruun.springboot:preliquibase-spring-boot-starter:1.4.0'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
-    implementation 'io.minio:minio:8.5.7'
 
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
+
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
@@ -59,7 +64,11 @@ compileJava {
             '-Amapstruct.unmappedTargetPolicy=IGNORE'
     ]
 }
-
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
 tasks.named('test') {
     useJUnitPlatform()
 }

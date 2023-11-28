@@ -13,7 +13,8 @@ public enum CustomErrorCode {
     TYPE_MISMATCH(40001, HttpStatus.BAD_REQUEST),
     INTERNAL_EXCEPTION(50000, HttpStatus.INTERNAL_SERVER_ERROR),
     CONFLICT(40900, HttpStatus.CONFLICT),
-    BUSINESS_LOGIC(40901, HttpStatus.CONFLICT);
+    BUSINESS_LOGIC(40901, HttpStatus.CONFLICT),
+    FORBIDDEN(40301, HttpStatus.FORBIDDEN);
 
     private final int code;
     private final HttpStatus httpStatus;

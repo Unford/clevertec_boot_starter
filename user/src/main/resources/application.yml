@@ -1,50 +1,71 @@
 spring:
-    datasource:
-        driver-class-name: org.postgresql.Driver
-        url: jdbc:postgresql://localhost:5432/videohosting?currentSchema=video_hosting_schema
-        username: myUser1
-        password: password
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            loggerLevel: basic
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/videohosting?currentSchema=video_hosting_schema
+    username: myUser1
+    password: password
 
-    liquibase:
-        default-schema: video_hosting_schema
-        change-log: classpath:db.changelog/db.changelog.yaml
-        liquibase-schema: video_hosting_schema
-    jpa:
-        properties:
-            hibernate:
-                default_schema: video_hosting_schema
-                format_sql: true
+  liquibase:
+    default-schema: video_hosting_schema
+    change-log: classpath:db.changelog/db.changelog.yaml
+    liquibase-schema: video_hosting_schema
+  jpa:
+    properties:
+      hibernate:
+        default_schema: video_hosting_schema
+        format_sql: true
+        ddl-auto: validate
 
-        show-sql: true
-    mvc:
-        throw-exception-if-no-handler-found: true
-    web:
-        resources:
-            add-mappings: false
-    docker:
-        compose:
-            file: user/compose.yaml
+    show-sql: true
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+  docker:
+    compose:
+      file: user/compose.yaml
 
 minio:
-    bucket: images
-    url: http://localhost:9000
-    accessKey: minioadmin
-    secretKey: minioadmin
+  bucket: images
+  url: http://localhost:9000
+  accessKey: minioadmin
+  secretKey: minioadmin
 
 
 
 logging:
-    level:
-        org:
-            hibernate:
-                type: trace
+  level:
+    ru.clevertec.course.spring.gateway.BlackListGateway: DEBUG
+    org:
+      hibernate:
+        type: trace
+
+
+
+
+
 
 clevertec:
-    session:
-        enable: true
-        cleaner:
-            enable: true
-        default:
-            black-list: ["1", "12"]
+  session:
+    enable: true
+    cleaner:
+      enable: true
+    default:
+      black-list: [ "1", "2" ]
+      black-list-providers: ru.clevertec.course.spring.session.CustomBlackListProvider
+
+  gateway:
+    url: http://localhost:4444
+    getBlackList: /blackList
+
+
+
 
 
