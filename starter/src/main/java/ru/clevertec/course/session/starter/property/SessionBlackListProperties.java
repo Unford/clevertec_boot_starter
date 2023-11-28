@@ -2,7 +2,7 @@ package ru.clevertec.course.session.starter.property;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import ru.clevertec.course.session.starter.service.BlackListProvider;
+import ru.clevertec.course.session.api.service.provider.BlackListProvider;
 import ru.clevertec.course.session.starter.service.PropertyBlackListProvider;
 
 import java.util.HashSet;

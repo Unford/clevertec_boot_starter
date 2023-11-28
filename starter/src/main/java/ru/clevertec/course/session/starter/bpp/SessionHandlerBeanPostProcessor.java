@@ -10,7 +10,7 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import ru.clevertec.course.session.starter.annotation.SessionManagement;
 import ru.clevertec.course.session.starter.property.SessionBlackListProperties;
-import ru.clevertec.course.session.starter.service.SessionService;
+import ru.clevertec.course.session.api.service.SessionService;
 
 import java.lang.reflect.Constructor;
 import java.util.*;

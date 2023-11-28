@@ -8,10 +8,10 @@ import ru.clevertec.course.session.starter.annotation.LoginParameter;
 import ru.clevertec.course.session.starter.annotation.SessionManagement;
 import ru.clevertec.course.session.starter.exception.LoginForbiddenException;
 import ru.clevertec.course.session.starter.exception.SessionProxyException;
-import ru.clevertec.course.session.starter.model.LoginProvider;
-import ru.clevertec.course.session.starter.model.SessionDetails;
+import ru.clevertec.course.session.api.model.LoginProvider;
+import ru.clevertec.course.session.api.model.SessionDetails;
 import ru.clevertec.course.session.starter.property.SessionBlackListProperties;
-import ru.clevertec.course.session.starter.service.SessionService;
+import ru.clevertec.course.session.api.service.SessionService;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -80,16 +80,18 @@ public class SessionProxyMethodInterceptor implements MethodInterceptor {
         return Optional.empty();
     }
 
-    private SessionDetails setSessionParameters(SessionDetails session, Parameter[] parameters, Object[] arguments) {
-        boolean check = false;
+    private void setSessionParameters(SessionDetails session, Parameter[] parameters, Object[] arguments) {
+        Arrays.stream(parameters)
+                .map(Parameter::getType)
+                .filter(SessionDetails.class::isAssignableFrom)
+                .findFirst()
+                .orElseThrow(() -> new SessionProxyException("UserSession argument is required for Session Management"));
+
         for (int i = 0; i < arguments.length; i++) {
             if (SessionDetails.class.isAssignableFrom(parameters[i].getType())) {
                 arguments[i] = session;
-                check = true;
             }
         }
-        if (!check) throw new SessionProxyException("UserSession argument is required for Session Management");
-        return session;
     }
 
 

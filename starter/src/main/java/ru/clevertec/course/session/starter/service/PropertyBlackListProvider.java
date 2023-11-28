@@ -1,6 +1,7 @@
 package ru.clevertec.course.session.starter.service;
 
 import lombok.RequiredArgsConstructor;
+import ru.clevertec.course.session.api.service.provider.BlackListProvider;
 import ru.clevertec.course.session.starter.property.SessionBlackListProperties;
 
 import java.util.Set;

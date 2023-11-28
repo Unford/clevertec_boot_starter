@@ -1,7 +1,6 @@
 package ru.clevertec.course.session.starter.annotation;
 
-import ru.clevertec.course.session.starter.service.BlackListProvider;
-import ru.clevertec.course.session.starter.service.PropertyBlackListProvider;
+import ru.clevertec.course.session.api.service.provider.BlackListProvider;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
