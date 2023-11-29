@@ -4,15 +4,16 @@ import lombok.RequiredArgsConstructor;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.beans.factory.BeanFactory;
+import ru.clevertec.course.session.api.model.LoginProvider;
+import ru.clevertec.course.session.api.model.SessionDetails;
+import ru.clevertec.course.session.api.service.SessionService;
 import ru.clevertec.course.session.starter.annotation.LoginParameter;
 import ru.clevertec.course.session.starter.annotation.SessionManagement;
 import ru.clevertec.course.session.starter.exception.LoginForbiddenException;
 import ru.clevertec.course.session.starter.exception.SessionProxyException;
-import ru.clevertec.course.session.api.model.LoginProvider;
-import ru.clevertec.course.session.api.model.SessionDetails;
 import ru.clevertec.course.session.starter.property.SessionBlackListProperties;
-import ru.clevertec.course.session.api.service.SessionService;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
@@ -32,17 +33,15 @@ public class SessionProxyMethodInterceptor implements MethodInterceptor {
         Method method = invocation.getMethod();
         SessionManagement annotation = method.getAnnotation(SessionManagement.class);
         if (Objects.nonNull(annotation)) {
-            Set<String> blackList = extractBlackList(annotation);
+
             Parameter[] parameters = method.getParameters();
             Object[] arguments = invocation.getArguments();
 
             String login = getLogin(parameters, arguments)
                     .orElseThrow(() -> new SessionProxyException("Login parameter not found, provide LoginProvider or" +
-                            " String annotated @LoginParameter"));
-            if (blackList.contains(login)) {
-                throw new LoginForbiddenException("Access denied for '%s', you are on the black list".formatted(login));
-            }
+                            " annotate @LoginParameter"));
             Optional.of(login)
+                    .map(l -> this.checkBlackList(l, annotation))
                     .flatMap(sessionService::getSession)
                     .or(() -> Optional.ofNullable(sessionService.create(login)))
                     .ifPresent(s -> this.setSessionParameters(s, parameters, arguments));
@@ -50,6 +49,14 @@ public class SessionProxyMethodInterceptor implements MethodInterceptor {
         }
 
         return invocation.proceed();
+    }
+
+    private String checkBlackList(String login, SessionManagement annotation) {
+        Set<String> blackList = extractBlackList(annotation);
+        if (blackList.contains(login)) {
+            throw new LoginForbiddenException("Access denied for '%s', you are on the black list".formatted(login));
+        }
+        return login;
     }
 
     private Set<String> extractBlackList(SessionManagement annotation) {
@@ -69,16 +76,41 @@ public class SessionProxyMethodInterceptor implements MethodInterceptor {
     private Optional<String> getLogin(Parameter[] parameters, Object[] arguments) {
         for (int i = 0; i < arguments.length; i++) {
             Parameter p = parameters[i];
-            if (String.class.isAssignableFrom(p.getType()) && p.isAnnotationPresent(LoginParameter.class)) {
-                return Optional.of((String) arguments[i]);
-            }
-            if (LoginProvider.class.isAssignableFrom(p.getType())) {
+            if (p.isAnnotationPresent(LoginParameter.class)) {
+                if (String.class.isAssignableFrom(p.getType())) {
+                    return Optional.of((String) arguments[i]);
+                } else {
+                    String pattern = p.getAnnotation(LoginParameter.class).value();
+                    return extractLoginFromField(arguments[i], pattern);
+                }
+            }else if (LoginProvider.class.isAssignableFrom(p.getType())) {
                 LoginProvider loginProvider = (LoginProvider) arguments[i];
                 return Optional.ofNullable(loginProvider.getLogin());
             }
         }
         return Optional.empty();
     }
+
+    private Optional<String> extractLoginFromField(Object argument, String pattern) {
+        String[] fieldNames = pattern.split("\\.");
+        Object fieldValue = argument;
+        try {
+            for (String fieldName : fieldNames) {
+                if (fieldValue == null) return Optional.empty();
+                Field field = fieldValue.getClass().getDeclaredField(fieldName);
+                field.setAccessible(true);
+                fieldValue = field.get(fieldValue);
+            }
+        } catch (IllegalAccessException e) {
+            throw new SessionProxyException("Can't access field " + pattern, e);
+        } catch (NoSuchFieldException e) {
+            throw new SessionProxyException("Field %s not found".formatted(pattern), e);
+        }
+
+        return Optional.ofNullable(fieldValue.toString());
+
+    }
+
 
     private void setSessionParameters(SessionDetails session, Parameter[] parameters, Object[] arguments) {
         Arrays.stream(parameters)

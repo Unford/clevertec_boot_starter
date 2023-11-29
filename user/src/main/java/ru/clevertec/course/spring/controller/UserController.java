@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.clevertec.course.session.api.model.SessionDetails;
 import ru.clevertec.course.session.starter.annotation.LoginParameter;
 import ru.clevertec.course.session.starter.annotation.SessionManagement;
-import ru.clevertec.course.session.starter.service.PropertyBlackListProvider;
+import ru.clevertec.course.spring.model.dto.InnerLoginDto;
 import ru.clevertec.course.spring.model.dto.UserDto;
 import ru.clevertec.course.spring.model.validation.CreateValidation;
 import ru.clevertec.course.spring.service.UserService;
@@ -32,7 +32,15 @@ public class UserController {
                               UserDto userDto, SessionDetails sessionDetails) {
         log.info("{}",sessionDetails);
         return userService.create(userDto);
+    }
 
+    @PostMapping("/1")
+    @ResponseStatus(value = HttpStatus.CREATED)
+    @SessionManagement(blackListProviders = GatewayBlackListProvider.class)
+    public InnerLoginDto methodField(@RequestBody @LoginParameter("holder.login") InnerLoginDto userDto,
+                                     SessionDetails sessionDetails) {
+        log.info("{}",sessionDetails);
+        return userDto;
     }
 
     @DeleteMapping("/{id}")
