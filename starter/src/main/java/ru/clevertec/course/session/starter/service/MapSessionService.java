@@ -2,7 +2,7 @@ package ru.clevertec.course.session.starter.service;
 
 import ru.clevertec.course.session.api.model.SessionDetails;
 import ru.clevertec.course.session.api.service.SessionService;
-import ru.clevertec.course.session.starter.model.DefaultSessionDetails;
+import ru.clevertec.course.session.api.model.DefaultSessionDetails;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

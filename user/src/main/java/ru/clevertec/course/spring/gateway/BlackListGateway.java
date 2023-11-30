@@ -12,7 +12,7 @@ public interface BlackListGateway {
 
     @GetMapping(path = "${clevertec.gateway.getBlackList}",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    GatewayResponse getShortInfoOffers();
+    GatewayResponse getBlackList();
 
 
 }

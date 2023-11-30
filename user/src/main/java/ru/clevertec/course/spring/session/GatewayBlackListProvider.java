@@ -16,6 +16,6 @@ public class GatewayBlackListProvider implements BlackListProvider {
 
     @Override
     public Set<String> getBlackList() {
-        return new HashSet<>(blackListGateway.getShortInfoOffers().logins());
+        return new HashSet<>(blackListGateway.getBlackList().logins());
     }
 }

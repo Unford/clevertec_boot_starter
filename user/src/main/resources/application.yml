@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: api
   cloud:
     openfeign:
       client:
@@ -37,6 +39,7 @@ spring:
 logging:
   level:
     ru.clevertec.course.spring.gateway.BlackListGateway: DEBUG
+    ru.clevertec.course.spring.gateway.SessionGateway: DEBUG
     org:
       hibernate:
         type: trace
@@ -48,6 +51,7 @@ logging:
 
 clevertec:
   session:
+    url: "http://localhost:8081/api/v1/sessions"
     enable: true
     cleaner:
       enable: true

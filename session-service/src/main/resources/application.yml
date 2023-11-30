@@ -1,0 +1,41 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://postgres:5432/videohosting?currentSchema=custom_session
+    username: myUser1
+    password: password
+
+  liquibase:
+    default-schema: custom_session
+    change-log: classpath:db.changelog/db.changelog.yaml
+    liquibase-schema: custom_session
+  jpa:
+    properties:
+      hibernate:
+        default_schema: custom_session
+        format_sql: true
+        ddl-auto: validate
+
+    show-sql: true
+
+  web:
+    resources:
+      add-mappings: false
+
+
+
+logging:
+  level:
+    org:
+      hibernate:
+        type: trace
+
+
+
+
+
+
+
