@@ -2,7 +2,6 @@ package ru.clevertec.course.spring.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Service;
 import ru.clevertec.course.session.api.model.SessionDetails;
 import ru.clevertec.course.session.api.service.SessionService;
 import ru.clevertec.course.spring.exception.ResourceNotFoundException;
@@ -12,7 +11,6 @@ import ru.clevertec.course.spring.model.dto.LoginDto;
 import java.util.Optional;
 
 @Profile("api")
-@Service
 @RequiredArgsConstructor
 public class ApiSessionService implements SessionService {
     private final SessionGateway sessionGateway;
@@ -26,13 +24,8 @@ public class ApiSessionService implements SessionService {
     public Optional<SessionDetails> getSession(String login) {
         try {
             return Optional.ofNullable(sessionGateway.findByLogin(login));
-        }catch (ResourceNotFoundException e){
+        } catch (ResourceNotFoundException e) {
             return Optional.empty();
         }
-    }
-
-    @Override
-    public int deleteAllSpoiled() {
-        return sessionGateway.clean();
     }
 }

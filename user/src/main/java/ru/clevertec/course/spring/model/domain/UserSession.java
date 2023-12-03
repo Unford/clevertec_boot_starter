@@ -1,13 +1,14 @@
 package ru.clevertec.course.spring.model.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.UuidGenerator;
-import ru.clevertec.course.session.api.model.SessionDetails;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Getter
 @Setter

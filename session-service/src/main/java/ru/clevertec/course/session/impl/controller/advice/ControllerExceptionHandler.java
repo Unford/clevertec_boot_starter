@@ -109,10 +109,8 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
 
-
-
     @ExceptionHandler(Exception.class)
-    protected ResponseEntity<Object> handleExceptionInternal(Exception ex) {
+    protected ResponseEntity<ExceptionResponse> handleExceptionInternal(Exception ex) {
         CustomErrorCode errorCode = CustomErrorCode.INTERNAL_EXCEPTION;
         ExceptionResponse errorInfo = new ExceptionResponse(errorCode.getCode(), ex.getMessage());
         return new ResponseEntity<>(errorInfo, errorCode.getHttpStatus());

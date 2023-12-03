@@ -20,6 +20,7 @@ import java.util.Optional;
 public class SessionHandlerBeanPostProcessor implements BeanPostProcessor, BeanFactoryAware {
     private final Map<String, Class<?>> beanNamesWithAnnotatedMethods = new HashMap<>();
     private BeanFactory beanFactory;
+
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         this.beanFactory = beanFactory;

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.BeanFactory;
 import ru.clevertec.course.session.api.model.LoginProvider;
 import ru.clevertec.course.session.api.model.SessionDetails;
 import ru.clevertec.course.session.api.service.SessionService;
+import ru.clevertec.course.session.api.service.provider.BlackListProvider;
 import ru.clevertec.course.session.starter.annotation.LoginParameter;
 import ru.clevertec.course.session.starter.annotation.SessionManagement;
 import ru.clevertec.course.session.starter.exception.LoginForbiddenException;
@@ -18,6 +19,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @RequiredArgsConstructor
@@ -40,8 +42,14 @@ public class SessionProxyMethodInterceptor implements MethodInterceptor {
             String login = getLogin(parameters, arguments)
                     .orElseThrow(() -> new SessionProxyException("Login parameter not found, provide LoginProvider or" +
                             " annotate @LoginParameter"));
+            Set<String> blackList = extractBlackList(annotation);
+
             Optional.of(login)
-                    .map(l -> this.checkBlackList(l, annotation))
+                    .filter(l -> isLoginBlackListed(l, blackList))
+                    .or(() -> {
+                        throw new LoginForbiddenException("Access denied for '%s', you are on the black list"
+                                .formatted(login));
+                    })
                     .flatMap(sessionService::getSession)
                     .or(() -> Optional.ofNullable(sessionService.create(login)))
                     .ifPresent(s -> this.setSessionParameters(s, parameters, arguments));
@@ -51,25 +59,26 @@ public class SessionProxyMethodInterceptor implements MethodInterceptor {
         return invocation.proceed();
     }
 
-    private String checkBlackList(String login, SessionManagement annotation) {
-        Set<String> blackList = extractBlackList(annotation);
-        if (blackList.contains(login)) {
-            throw new LoginForbiddenException("Access denied for '%s', you are on the black list".formatted(login));
-        }
-        return login;
+    private boolean isLoginBlackListed(String login, Set<String> blackList) {
+        return !blackList.contains(login);
     }
 
     private Set<String> extractBlackList(SessionManagement annotation) {
         Set<String> blackList = new HashSet<>(List.of(annotation.blackList()));
-        blackList.addAll(Stream.concat(annotation.includeDefaultProviders() ?
-                                blackListProperties.getBlackListProviders().stream() : Stream.empty(),
-                        Stream.of(annotation.blackListProviders()))
+
+        blackList.addAll(extractBlackListProvidersStream(annotation)
                 .map(beanFactory::getBean)
                 .flatMap(pr -> pr.getBlackList().stream())
                 .collect(Collectors.toSet())
         );
 
         return blackList;
+    }
+
+    private Stream<Class<? extends BlackListProvider>> extractBlackListProvidersStream(SessionManagement annotation) {
+        return Stream.concat(annotation.includeDefaultProviders() ?
+                        blackListProperties.getBlackListProviders().stream() : Stream.empty(),
+                Stream.of(annotation.blackListProviders()));
     }
 
 
@@ -83,7 +92,7 @@ public class SessionProxyMethodInterceptor implements MethodInterceptor {
                     String pattern = p.getAnnotation(LoginParameter.class).value();
                     return extractLoginFromField(arguments[i], pattern);
                 }
-            }else if (LoginProvider.class.isAssignableFrom(p.getType())) {
+            } else if (LoginProvider.class.isAssignableFrom(p.getType())) {
                 LoginProvider loginProvider = (LoginProvider) arguments[i];
                 return Optional.ofNullable(loginProvider.getLogin());
             }
@@ -113,17 +122,11 @@ public class SessionProxyMethodInterceptor implements MethodInterceptor {
 
 
     private void setSessionParameters(SessionDetails session, Parameter[] parameters, Object[] arguments) {
-        Arrays.stream(parameters)
-                .map(Parameter::getType)
-                .filter(SessionDetails.class::isAssignableFrom)
-                .findFirst()
+        IntStream.range(0, parameters.length)
+                .filter(i -> SessionDetails.class.isAssignableFrom(parameters[i].getType()))
+                .peek(i -> arguments[i] = session)
+                .findAny()
                 .orElseThrow(() -> new SessionProxyException("UserSession argument is required for Session Management"));
-
-        for (int i = 0; i < arguments.length; i++) {
-            if (SessionDetails.class.isAssignableFrom(parameters[i].getType())) {
-                arguments[i] = session;
-            }
-        }
     }
 
 

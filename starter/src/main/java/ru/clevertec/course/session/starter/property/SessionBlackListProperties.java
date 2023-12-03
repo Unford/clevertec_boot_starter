@@ -13,6 +13,7 @@ import java.util.Set;
 @ConfigurationProperties(prefix = "clevertec.session.default")
 public class SessionBlackListProperties {
     private final Set<String> blackList = new HashSet<>();
+
     private final Set<Class<? extends BlackListProvider>> blackListProviders =
             new HashSet<>(List.of(PropertyBlackListProvider.class));
 

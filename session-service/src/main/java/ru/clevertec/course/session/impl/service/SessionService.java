@@ -17,16 +17,18 @@ import java.time.LocalDate;
 public class SessionService {
     private final SessionRepository sessionRepository;
     private final SessionMapper mapper;
-    @Transactional
 
+    @Transactional
     public SessionResponse create(String login) {
         return mapper.toSessionResponse(sessionRepository.save(new UserSession().setLogin(login)));
     }
 
     public SessionResponse getSession(String login) {
-        return mapper.toSessionResponse(sessionRepository.findByLogin(login)
-                .orElseThrow(() -> new ResourceNotFoundException("Login %s not found".formatted(login))));
+        return sessionRepository.findByLogin(login)
+                .map(mapper::toSessionResponse)
+                .orElseThrow(() -> new ResourceNotFoundException("Login %s not found".formatted(login)));
     }
+
     @Transactional
     public int deleteAllSpoiled() {
         return sessionRepository.deleteByCreatedDateTimeLessThan(LocalDate.now().atStartOfDay());

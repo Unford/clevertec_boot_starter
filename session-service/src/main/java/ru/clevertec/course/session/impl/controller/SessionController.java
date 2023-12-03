@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import ru.clevertec.course.session.impl.dto.SessionRequest;
 import ru.clevertec.course.session.impl.dto.SessionResponse;
 import ru.clevertec.course.session.impl.service.SessionService;
@@ -22,18 +21,11 @@ public class SessionController {
 
     @GetMapping
     public SessionResponse findByLogin(@RequestParam @NotBlank @Size(max = 255) String login) {
-       return sessionService.getSession(login);
+        return sessionService.getSession(login);
     }
 
     @PostMapping
     public SessionResponse createSession(@RequestBody @Valid SessionRequest request) {
         return sessionService.create(request.getLogin());
     }
-
-    @DeleteMapping("/clean")
-    public int clean() {
-        return sessionService.deleteAllSpoiled();
-    }
-
-
 }
