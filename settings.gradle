@@ -1,4 +1,6 @@
 rootProject.name = 'boot-session-starter'
-include 'api'
 include 'starter'
+include 'user'
+include 'session-api'
+include 'session-service'
 

@@ -1,0 +1,35 @@
+services:
+  session_service:
+    build:
+      dockerfile: ../session-service/dockerfile
+      context: ../session-service
+    ports:
+      - '8081:8081'
+    networks:
+      - postgres_n
+    depends_on:
+      - postgres
+
+  postgres:
+    image: 'postgres:14.9'
+    environment:
+      - POSTGRES_DB=videohosting
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=myUser1
+    ports:
+      - '5432:5432'
+    networks:
+      - postgres_n
+
+  wiremock:
+    image: "wiremock/wiremock:latest"
+    container_name: my_wiremock
+    ports:
+      - 4444:8080
+    volumes:
+      - ./wiremock/__files:/home/wiremock/__files
+      - ./wiremock/mappings:/home/wiremock/mappings
+
+networks:
+  postgres_n:
+    driver: bridge
