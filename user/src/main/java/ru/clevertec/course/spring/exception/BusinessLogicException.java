@@ -1,6 +1,6 @@
 package ru.clevertec.course.spring.exception;
 
-public class BusinessLogicException extends ServiceException{
+public class BusinessLogicException extends ServiceException {
     public BusinessLogicException(String message) {
         super(message);
     }

@@ -3,7 +3,6 @@ package ru.clevertec.course.spring.gateway;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import ru.clevertec.course.spring.model.dto.GatewayResponse;
 import ru.clevertec.course.spring.model.dto.LoginDto;
 import ru.clevertec.course.spring.model.dto.SessionResponse;
 
@@ -18,6 +17,6 @@ public interface SessionGateway {
             produces = MediaType.APPLICATION_JSON_VALUE)
     SessionResponse create(@RequestBody LoginDto login);
 
-    @DeleteMapping(value = "/clean",produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/clean", produces = MediaType.APPLICATION_JSON_VALUE)
     int clean();
 }

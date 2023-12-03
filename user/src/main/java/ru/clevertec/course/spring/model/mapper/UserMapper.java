@@ -1,9 +1,6 @@
 package ru.clevertec.course.spring.model.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
 import ru.clevertec.course.spring.model.domain.User;
 import ru.clevertec.course.spring.model.dto.UserDto;
 

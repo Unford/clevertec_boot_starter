@@ -19,13 +19,13 @@ import java.util.Optional;
 @Slf4j
 public class DefaultSessionService implements SessionService {
     private static final String SUFFIX = "/";
-    public static final String LOGIN = "login";
+    private static final String LOGIN = "login";
 
     private final RestTemplate restTemplate;
     private final SessionServiceProperties serviceProperties;
 
-    private static String createUrl;
-    private static String findUrl;
+    private String createUrl;
+    private String findUrl;
 
     @PostConstruct
     private void construct() {

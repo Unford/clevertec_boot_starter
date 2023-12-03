@@ -5,7 +5,6 @@ import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -23,7 +22,6 @@ public class User {
     private String name;
     @Column(unique = true, nullable = false)
     private String email;
-
 
 
     @Override

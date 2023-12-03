@@ -9,9 +9,10 @@ public class InnerLoginDto {
     private InnerLoginHolder holder;
     private String name;
     private String email;
+
     @Data
     @Accessors(chain = true)
-    public static class InnerLoginHolder{
+    public static class InnerLoginHolder {
         private String login;
     }
 }
