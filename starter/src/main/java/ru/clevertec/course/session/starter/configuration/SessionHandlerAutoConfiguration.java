@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
+import ru.clevertec.course.session.api.service.SessionService;
 import ru.clevertec.course.session.starter.bpp.SessionHandlerBeanPostProcessor;
 import ru.clevertec.course.session.starter.exception.SessionServiceException;
 import ru.clevertec.course.session.starter.property.SessionBlackListProperties;
@@ -44,6 +45,7 @@ public class SessionHandlerAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnBean(value = SessionService.class)
     public DefaultSessionService defaultSessionService(RestTemplate restTemplate,
                                                        SessionServiceProperties serviceProperties) {
         return new DefaultSessionService(restTemplate, serviceProperties);
